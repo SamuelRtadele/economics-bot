@@ -67,9 +67,9 @@ const JOB_FIELDS = {
       // Amharic
       'ግብይት', 'ዲጂታል', 'ማህበራዊ', 'ብራንድ', 'ማስታወቂያ',
       'ግንኙነት', 'ዘመቻ', 'እድገት',
-      // Afan Oromo
+      // Afan Oromo – fixed the string with a quote inside
       'gabbii', 'dijitaala', 'hawaasa', 'balbala', 'beeksisa',
-      'quunnamtii', 'olka'ina'
+      'quunnamtii', "olka'ina"   // ✅ double quotes solve the issue
     ]
   },
   healthcare: {
@@ -138,7 +138,7 @@ const EXCLUSION_KEYWORDS = [
   'ከፍተኛ', 'ዳይሬክተር', 'ማናጀር', 'ርዕሰ', 'መሪ',
   'ልምድ የሚጠይቅ', 'አስፈፃሚ', 'አለቃ',
   // Afan Oromo
-  'ol'aanaa', 'daayireektara', 'manaajara', 'hojjataa', 'qabxii',
+  "ol'aanaa", 'daayireektara', 'manaajara', 'hojjataa', 'qabxii',
   'muuxannoo barbaada', 'hooggantoo'
 ];
 
