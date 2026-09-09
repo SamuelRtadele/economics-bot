@@ -1,7 +1,8 @@
-app = "economics-bot-samuel"
-primary_region = "iad"
+app = "economics-bot-samuelT"
+primary_region = "ams"
 
 [build]
+builder="buildpacks"
 
 [http_service]
   internal_port = 8080
