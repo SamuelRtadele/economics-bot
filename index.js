@@ -74,7 +74,7 @@ const JOB_FIELDS = {
       // Amharic
       'ግብይት', 'ዲጂታል', 'ማህበራዊ', 'ብራንድ', 'ማስታወቂያ',
       'ግንኙነት', 'ዘመቻ', 'እድገት',
-      // Afan Oromo (fixed quote)
+      // Afan Oromo (FIXED: double quotes around olka'ina)
       'gabbii', 'dijitaala', 'hawaasa', 'balbala', 'beeksisa',
       'quunnamtii', "olka'ina"
     ]
@@ -147,7 +147,7 @@ const EXCLUSION_KEYWORDS = [
   'ከፍተኛ', 'ዳይሬክተር', 'ማናጀር', 'ርዕሰ', 'መሪ',
   'ልምድ የሚጠይቅ', 'አስፈፃሚ', 'አለቃ',
   // Afan Oromo
-  'ol\'aanaa', 'daayireektara', 'manaajara', 'hojjataa', 'qabxii',
+  "ol'aanaa", 'daayireektara', 'manaajara', 'hojjataa', 'qabxii',
   'muuxannoo barbaada', 'hooggantoo'
 ];
 
@@ -252,7 +252,6 @@ function extractMatchingSummary(text, userPrefs, userId) {
 
   const fieldNames = userPrefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ');
 
-  // Compact summary format
   let summary = '';
   
   summary += `✅ *${matchedJobs.length} job(s) found*\n`;
