@@ -2,7 +2,7 @@ app = "economics-bot-samuel"
 primary_region = "ams"
 
 [build]
-builder="buildpacks"
+dockerfile="Dockerfile"
 
 [http_service]
   internal_port = 8080
