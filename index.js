@@ -6,94 +6,157 @@ dotenv.config();
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 // ============================================================
-// CONFIGURATION – Edit these to customize your bot
+// JOB FIELDS WITH MULTI-LANGUAGE SUPPORT
 // ============================================================
 
-// Job categories with their keywords
 const JOB_FIELDS = {
   economics: {
     name: '📊 Economics',
     keywords: [
+      // English
       'economics', 'economist', 'economic', 'finance', 'financial',
       'business', 'analyst', 'data analysis', 'market', 'policy',
       'research', 'statistics', 'econometric', 'macro', 'micro',
-      'banking', 'investment', 'consulting', 'advisory'
+      'banking', 'investment', 'consulting', 'advisory',
+      // Amharic
+      'ኢኮኖሚክስ', 'ኢኮኖሚ', 'ፋይናንስ', 'ባንክ', 'ንግድ', 'ገበያ',
+      'ምርምር', 'ስታቲስቲክስ', 'ኢንቨስትመንት', 'አማካሪ',
+      // Afan Oromo
+      'ekinomics', 'qonna', 'maallaqa', 'bankii', 'daldala',
+      'qorannoo', 'tilmaama', 'invastimenti', 'gorsa'
     ]
   },
   tech: {
     name: '💻 Technology',
     keywords: [
+      // English
       'software', 'developer', 'engineer', 'programming', 'coding',
       'javascript', 'python', 'java', 'react', 'node', 'full stack',
       'frontend', 'backend', 'devops', 'cloud', 'aws', 'data science',
-      'machine learning', 'ai', 'artificial intelligence'
+      'machine learning', 'ai', 'artificial intelligence',
+      // Amharic
+      'ሶፍትዌር', 'ፕሮግራም', 'ኮድ', 'ጃቫስክሪፕት', 'ፓይተን',
+      'ዳታ', 'ማሽን', 'ክላውድ', 'ኢንጂነር',
+      // Afan Oromo
+      'softiweerii', 'prograamii', 'koodii', 'jazzavaskiripti',
+      'paayiton', 'daataa', 'maashinii', 'kilaawudii', 'injiniyera'
     ]
   },
   finance: {
     name: '💰 Finance',
     keywords: [
+      // English
       'finance', 'financial', 'investment', 'banking', 'analyst',
       'portfolio', 'asset management', 'wealth', 'trading',
-      'equity', 'fixed income', 'derivatives', 'risk', 'compliance'
+      'equity', 'fixed income', 'derivatives', 'risk', 'compliance',
+      // Amharic
+      'ፋይናንስ', 'ኢንቨስትመንት', 'ባንክ', 'ንብረት', 'ንግድ',
+      'አደጋ', 'ተገዢነት',
+      // Afan Oromo
+      'maallaqa', 'invastimenti', 'bankii', 'qabeenyaa', 'daldala',
+      'rakkoo', 'fudhatama'
     ]
   },
   marketing: {
     name: '📢 Marketing',
     keywords: [
+      // English
       'marketing', 'digital marketing', 'seo', 'social media',
       'content', 'brand', 'advertising', 'pr', 'communications',
-      'campaign', 'analytics', 'growth', 'influencer'
+      'campaign', 'analytics', 'growth', 'influencer',
+      // Amharic
+      'ግብይት', 'ዲጂታል', 'ማህበራዊ', 'ብራንድ', 'ማስታወቂያ',
+      'ግንኙነት', 'ዘመቻ', 'እድገት',
+      // Afan Oromo
+      'gabbii', 'dijitaala', 'hawaasa', 'balbala', 'beeksisa',
+      'quunnamtii', 'olka'ina'
     ]
   },
   healthcare: {
     name: '🏥 Healthcare',
     keywords: [
+      // English
       'healthcare', 'medical', 'clinical', 'nursing', 'doctor',
       'pharmaceutical', 'public health', 'health', 'wellness',
-      'hospital', 'patient', 'care', 'research', 'biology'
+      'hospital', 'patient', 'care', 'research', 'biology',
+      // Amharic
+      'ጤና', 'ህክምና', 'ክሊኒካል', 'ነርሲንግ', 'ዶክተር',
+      'ፋርማሲ', 'ሆስፒታል', 'ታካሚ', 'ምርምር',
+      // Afan Oromo
+      'fayyaa', 'yaala', 'klinikaala', 'narsingii', 'doktara',
+      'farmaasii', 'hospitaala', 'dhukkubsataa', 'qorannoo'
     ]
   },
   engineering: {
     name: '🔧 Engineering',
     keywords: [
+      // English
       'engineering', 'civil', 'mechanical', 'electrical', 'chemical',
       'structural', 'aerospace', 'automotive', 'industrial',
-      'design', 'manufacturing', 'production', 'quality'
+      'design', 'manufacturing', 'production', 'quality',
+      // Amharic
+      'ኢንጂነሪንግ', 'ሲቪል', 'ሜካኒካል', 'ኤሌክትሪካል', 'ኬሚካል',
+      'ንድፍ', 'ማምረቻ', 'ጥራት',
+      // Afan Oromo
+      'injiniyera', 'siviili', 'mekaaniikaala', 'elektirikaala', 'keemikaala',
+      'faayidaa', 'oomisha', 'gaabbii'
     ]
   }
 };
 
-// Entry-level keywords (always applied)
+// ============================================================
+// ENTRY LEVEL KEYWORDS (Multi-language)
+// ============================================================
+
 const ENTRY_LEVEL_KEYWORDS = [
+  // English
   'entry level', 'entry-level', 'junior', 'graduate',
   'no experience', 'no prior experience', 'fresh graduate',
   'recent graduate', 'internship', 'trainee', 'apprentice',
   '0 years', 'zero years', 'entry', 'starting', 'beginner',
-  'associate', 'early career'
+  'associate', 'early career',
+  // Amharic
+  'ጅምር', 'አዲስ', 'ልምድ የሌለ', 'ተለማማጅ', 'ተማሪ', 'ጀማሪ',
+  'ያለ ልምድ', 'አዲስ ተመራቂ',
+  // Afan Oromo
+  'jirmi', 'haaraa', 'muuxannoo hin qabne', 'leennii', 'barnootaa',
+  'kan jalqabe', 'muuxannoo malee', 'haaraa eebbifame'
 ];
 
-// Exclusion keywords (block these)
+// ============================================================
+// EXCLUSION KEYWORDS (Multi-language)
+// ============================================================
+
 const EXCLUSION_KEYWORDS = [
+  // English
   'senior', 'director', 'manager', 'lead', 'head',
   'principal', 'sr ', 'vp', 'vice president',
   'executive', 'chief', 'cto', 'ceo', 'cfo',
   '5 years', '7 years', '10 years', 'experience required',
-  'staff', 'principal'
+  'staff', 'principal',
+  // Amharic
+  'ከፍተኛ', 'ዳይሬክተር', 'ማናጀር', 'ርዕሰ', 'መሪ',
+  'ልምድ የሚጠይቅ', 'አስፈፃሚ', 'አለቃ',
+  // Afan Oromo
+  'ol'aanaa', 'daayireektara', 'manaajara', 'hojjataa', 'qabxii',
+  'muuxannoo barbaada', 'hooggantoo'
 ];
 
 // ============================================================
-// USER PREFERENCES (stored in memory – resets on restart)
+// USER PREFERENCES
 // ============================================================
 
 const userPrefs = {};
+const jobMatches = {};
 
 function getUserPrefs(userId) {
   if (!userPrefs[userId]) {
     userPrefs[userId] = {
-      fields: ['economics'], // default field
+      fields: ['economics'],
       excludeSenior: true,
-      showPreview: true,
-      notifyOnMatch: true
+      showPreview: false,
+      notifyOnMatch: true,
+      compactView: true
     };
   }
   return userPrefs[userId];
@@ -105,7 +168,7 @@ function getUserPrefs(userId) {
 
 function containsKeywords(text, keywords) {
   const lower = text.toLowerCase();
-  return keywords.some(keyword => lower.includes(keyword));
+  return keywords.some(keyword => lower.includes(keyword.toLowerCase()));
 }
 
 function isEntryLevel(text) {
@@ -135,7 +198,7 @@ function isMatch(text, userPrefs) {
   return relevant && entry && !excluded;
 }
 
-// Smart splitter for bulk messages
+// Smart splitter
 function splitJobListings(text) {
   let parts = text.split(/\n\s*\n\s*\n/);
 
@@ -157,8 +220,8 @@ function splitJobListings(text) {
   return parts.length > 1 ? parts : [text];
 }
 
-// Extract matching jobs and build summary
-function extractMatchingSummary(text, userPrefs) {
+// Extract matching jobs with clean formatting
+function extractMatchingSummary(text, userPrefs, userId) {
   const chunks = splitJobListings(text);
   const matchedJobs = [];
 
@@ -173,32 +236,52 @@ function extractMatchingSummary(text, userPrefs) {
     return null;
   }
 
+  // Store matches for detail view
+  if (!jobMatches[userId]) {
+    jobMatches[userId] = {};
+  }
+  const matchId = Date.now().toString();
+  jobMatches[userId][matchId] = matchedJobs;
+
+  const fieldNames = userPrefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ');
+
+  // ============================================================
+  // COMPACT SUMMARY FORMAT (Clean & Readable)
+  // ============================================================
   let summary = '';
   
-  // Get field names for display
-  const fieldNames = userPrefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ');
-  
-  summary += `✅ *Found ${matchedJobs.length} matching job(s)*\n`;
-  summary += `📌 *Fields:* ${fieldNames}\n`;
-  summary += `📌 *Excluding Senior:* ${userPrefs.excludeSenior ? '✅ Yes' : '❌ No'}\n\n`;
+  // Header
+  summary += `✅ *${matchedJobs.length} job(s) found*\n`;
+  summary += `📌 ${fieldNames}\n`;
+  if (userPrefs.excludeSenior) summary += `🚫 Senior roles excluded\n`;
   summary += `────────────────────\n\n`;
 
-  if (userPrefs.showPreview) {
-    summary += `📋 *Quick Preview:*\n`;
-    matchedJobs.forEach((job, index) => {
-      const preview = job.substring(0, 70) + (job.length > 70 ? '...' : '');
-      summary += `${index + 1}. ${preview}\n`;
-    });
-    summary += `\n────────────────────\n\n`;
-  }
-
-  summary += `📄 *Full Details:*\n\n`;
+  // Compact job list (only titles/previews)
   matchedJobs.forEach((job, index) => {
-    summary += `📌 *Job ${index + 1}*\n${job}\n\n`;
-    summary += `────────────────────\n\n`;
+    const lines = job.split('\n').filter(line => line.trim().length > 0);
+    const title = lines.length > 0 ? lines[0].trim() : job.substring(0, 60);
+    
+    // Check for salary indicator
+    const hasSalary = /[\$\€\£]|salary|ቤታ|kaffaltii/i.test(job);
+    
+    summary += `${index + 1}. `;
+    summary += title.length > 80 ? title.substring(0, 80) + '...' : title;
+    if (hasSalary) summary += ' 💰';
+    summary += '\n';
   });
 
-  return summary;
+  // Action buttons
+  const buttons = [
+    [Markup.button.callback(`📄 Show Full Details (${matchedJobs.length})`, `show_details_${matchId}`)],
+    [Markup.button.callback('🔙 Back to Main', 'menu_main')]
+  ];
+
+  return {
+    summary,
+    buttons,
+    matchId,
+    hasMatches: true
+  };
 }
 
 // ============================================================
@@ -236,18 +319,17 @@ function updateStats(fields, matched) {
 // BOT COMMANDS & HANDLERS
 // ============================================================
 
-// Start command – shows main menu
 bot.start(async (ctx) => {
   const userId = ctx.from.id;
   const prefs = getUserPrefs(userId);
   
   await ctx.reply(
     `🤖 *Job Filter Bot*\n\n` +
-    `I filter job postings for entry-level positions.\n\n` +
+    `I filter job postings for entry-level positions.\n` +
+    `Supports: English, Amharic, Afan Oromo\n\n` +
     `📌 *Current Settings:*\n` +
     `• Fields: ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n` +
-    `• Excluding Senior: ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `• Show Preview: ${prefs.showPreview ? '✅ Yes' : '❌ No'}\n\n` +
+    `• Excluding Senior: ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n\n` +
     `Forward me a job digest and I'll reply with matching jobs!`,
     {
       parse_mode: 'Markdown',
@@ -262,10 +344,46 @@ bot.start(async (ctx) => {
 });
 
 // ============================================================
+// SHOW DETAILS BUTTON HANDLER
+// ============================================================
+
+bot.action(/show_details_(.+)/, async (ctx) => {
+  const userId = ctx.from.id;
+  const matchId = ctx.match[1];
+  
+  if (!jobMatches[userId] || !jobMatches[userId][matchId]) {
+    await ctx.answerCbQuery('❌ Matches expired. Forward a new digest!', { showAlert: true });
+    return;
+  }
+
+  const matches = jobMatches[userId][matchId];
+  let details = `📄 *Full Job Details*\n\n`;
+  
+  matches.forEach((job, index) => {
+    details += `📌 *Job ${index + 1}*\n${job}\n\n`;
+    details += `────────────────────\n\n`;
+  });
+
+  // Show first 4000 chars (Telegram limit)
+  if (details.length > 4000) {
+    details = details.substring(0, 3900) + '\n\n... (truncated)';
+  }
+
+  await ctx.reply(details, {
+    parse_mode: 'Markdown',
+    ...Markup.inlineKeyboard([
+      [Markup.button.callback('📊 Change Fields', 'menu_fields')],
+      [Markup.button.callback('🔙 Back to Main', 'menu_main')]
+    ])
+  });
+
+  await ctx.answerCbQuery();
+});
+
+// ============================================================
 // INLINE KEYBOARD MENUS
 // ============================================================
 
-// Fields menu – shows all categories with toggle buttons
 bot.action('menu_fields', async (ctx) => {
   const userId = ctx.from.id;
   const prefs = getUserPrefs(userId);
@@ -288,7 +406,8 @@ bot.action('menu_fields', async (ctx) => {
   await ctx.editMessageText(
     `📊 *Select Job Categories*\n\n` +
     `Toggle fields on/off. The bot will search for jobs matching ALL selected fields.\n\n` +
-    `Selected: ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}`,
+    `Selected: ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n\n` +
+    `🔄 *Tip:* Click a button to toggle it.`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard(buttons)
@@ -313,7 +432,6 @@ Object.keys(JOB_FIELDS).forEach(key => {
       prefs.fields.push(key);
     }
     
-    // Update the menu
     let buttons = [];
     Object.keys(JOB_FIELDS).forEach(k => {
       const isActive = prefs.fields.includes(k);
@@ -330,7 +448,7 @@ Object.keys(JOB_FIELDS).forEach(key => {
     
     await ctx.editMessageText(
       `📊 *Select Job Categories*\n\n` +
-      `Toggle fields on/off. The bot will search for jobs matching ALL selected fields.\n\n` +
+      `Toggle fields on/off.\n\n` +
       `Selected: ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}`,
       {
         parse_mode: 'Markdown',
@@ -348,9 +466,7 @@ bot.action('menu_settings', async (ctx) => {
   
   await ctx.editMessageText(
     `⚙️ *Settings*\n\n` +
-    `Customize how the bot works.\n\n` +
     `📌 *Exclude Senior Roles:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Show Preview:* ${prefs.showPreview ? '✅ Yes' : '❌ No'}\n` +
     `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}`,
     {
       parse_mode: 'Markdown',
@@ -360,10 +476,9 @@ bot.action('menu_settings', async (ctx) => {
           'toggle_exclude'
         )],
         [Markup.button.callback(
-          `Toggle Preview ${prefs.showPreview ? '🔴' : '🟢'}`,
-          'toggle_preview'
+          `Toggle Notify ${prefs.notifyOnMatch ? '🔴' : '🟢'}`,
+          'toggle_notify'
         )],
-        [Markup.button.callback(`Toggle Notify ${prefs.notifyOnMatch ? '🔴' : '🟢'}`, 'toggle_notify')],
         [Markup.button.callback('🔙 Back to Main', 'menu_main')]
       ])
     }
@@ -377,26 +492,9 @@ bot.action('toggle_exclude', async (ctx) => {
   const prefs = getUserPrefs(userId);
   prefs.excludeSenior = !prefs.excludeSenior;
   await ctx.answerCbQuery(`Senior exclusion ${prefs.excludeSenior ? '✅ ENABLED' : '❌ DISABLED'}`);
+  
   await ctx.editMessageText(
     `✅ Senior exclusion ${prefs.excludeSenior ? 'ENABLED' : 'DISABLED'}!`,
-    {
-      parse_mode: 'Markdown',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('🔙 Back to Settings', 'menu_settings')],
-        [Markup.button.callback('🏠 Back to Main', 'menu_main')]
-      ])
-    }
-  );
-});
-
-// Toggle preview
-bot.action('toggle_preview', async (ctx) => {
-  const userId = ctx.from.id;
-  const prefs = getUserPrefs(userId);
-  prefs.showPreview = !prefs.showPreview;
-  await ctx.answerCbQuery(`Preview ${prefs.showPreview ? '✅ ENABLED' : '❌ DISABLED'}`);
-  await ctx.editMessageText(
-    `✅ Preview ${prefs.showPreview ? 'ENABLED' : 'DISABLED'}!`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard([
@@ -413,6 +511,7 @@ bot.action('toggle_notify', async (ctx) => {
   const prefs = getUserPrefs(userId);
   prefs.notifyOnMatch = !prefs.notifyOnMatch;
   await ctx.answerCbQuery(`Notify ${prefs.notifyOnMatch ? '✅ ENABLED' : '❌ DISABLED'}`);
+  
   await ctx.editMessageText(
     `✅ Notify ${prefs.notifyOnMatch ? 'ENABLED' : 'DISABLED'}!`,
     {
@@ -445,7 +544,7 @@ bot.action('menu_stats', async (ctx) => {
     `✅ Matched: ${stats.totalMatched}\n` +
     `❌ Rejected: ${stats.totalRejected}\n` +
     `📈 Match rate: ${matchRate}%\n\n` +
-    `*By Field:*\n${fieldStats}`,
+    `*By Field:*\n${fieldStats || 'No data yet'}`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard([
@@ -485,8 +584,8 @@ bot.action('menu_prefs', async (ctx) => {
     `📋 *Your Settings*\n\n` +
     `📌 *Fields:* ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n` +
     `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Show Preview:* ${prefs.showPreview ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}`,
+    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}\n\n` +
+    `🌍 *Languages Supported:* English, Amharic, Afan Oromo`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard([
@@ -499,8 +598,14 @@ bot.action('menu_prefs', async (ctx) => {
 
 // Back to main menu
 bot.action('menu_main', async (ctx) => {
+  const userId = ctx.from.id;
+  const prefs = getUserPrefs(userId);
+  
   await ctx.editMessageText(
-    `🏠 *Main Menu*\n\nSelect an option below:`,
+    `🏠 *Main Menu*\n\n` +
+    `📌 *Fields:* ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n` +
+    `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n\n` +
+    `Select an option below:`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard([
@@ -515,10 +620,9 @@ bot.action('menu_main', async (ctx) => {
 });
 
 // ============================================================
-// COMMANDS (Text-based)
+// COMMANDS
 // ============================================================
 
-// Help command
 bot.command('help', (ctx) => {
   ctx.reply(
     `🤖 *Job Filter Bot - Help*\n\n` +
@@ -529,14 +633,14 @@ bot.command('help', (ctx) => {
     `/stats - Show statistics\n` +
     `/settings - Show current settings\n` +
     `/prefs - Show your preferences\n\n` +
+    `📌 *Languages:* English, Amharic, Afan Oromo\n\n` +
     `📌 *How to use:*\n` +
     `Forward any job digest to me and I'll filter it.\n` +
-    `Use the buttons below to customize my behavior!`,
+    `I'll show a compact list with a "Show Details" button!`,
     { parse_mode: 'Markdown' }
   );
 });
 
-// Fields command
 bot.command('fields', (ctx) => {
   const userId = ctx.from.id;
   const prefs = getUserPrefs(userId);
@@ -544,7 +648,6 @@ bot.command('fields', (ctx) => {
   ctx.reply(`📊 *Selected Fields:* ${fields}`, { parse_mode: 'Markdown' });
 });
 
-// Stats command
 bot.command('stats', (ctx) => {
   const matchRate = stats.totalProcessed > 0 
     ? Math.round((stats.totalMatched / stats.totalProcessed) * 100) 
@@ -559,20 +662,17 @@ bot.command('stats', (ctx) => {
   );
 });
 
-// Settings command
 bot.command('settings', (ctx) => {
   const userId = ctx.from.id;
   const prefs = getUserPrefs(userId);
   ctx.reply(
     `⚙️ *Settings*\n\n` +
     `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Show Preview:* ${prefs.showPreview ? '✅ Yes' : '❌ No'}\n` +
     `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}`,
     { parse_mode: 'Markdown' }
   );
 });
 
-// Preferences command
 bot.command('prefs', (ctx) => {
   const userId = ctx.from.id;
   const prefs = getUserPrefs(userId);
@@ -581,8 +681,8 @@ bot.command('prefs', (ctx) => {
     `📋 *Your Preferences*\n\n` +
     `📌 *Fields:* ${fields}\n` +
     `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Show Preview:* ${prefs.showPreview ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}`,
+    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}\n\n` +
+    `🌍 *Languages:* English, Amharic, Afan Oromo`,
     { parse_mode: 'Markdown' }
   );
 });
@@ -598,17 +698,16 @@ bot.on('text', async (ctx) => {
 
   if (messageText.startsWith('/')) return;
 
-  // Show typing indicator
   await ctx.sendChatAction('typing');
 
-  const summary = extractMatchingSummary(messageText, prefs);
-  updateStats(prefs.fields, !!summary);
+  const result = extractMatchingSummary(messageText, prefs, userId);
+  updateStats(prefs.fields, !!result);
 
-  if (summary) {
-    await ctx.reply(summary, { parse_mode: 'Markdown' });
-    if (prefs.notifyOnMatch) {
-      await ctx.reply('🔔 *New match found!* Forward more job digests!', { parse_mode: 'Markdown' });
-    }
+  if (result) {
+    await ctx.reply(result.summary, {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard(result.buttons)
+    });
   } else {
     await ctx.reply('❌ No matching entry-level jobs found in this batch.');
   }
