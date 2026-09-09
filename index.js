@@ -18,12 +18,19 @@ const JOB_FIELDS = {
       'business', 'analyst', 'data analysis', 'market', 'policy',
       'research', 'statistics', 'econometric', 'macro', 'micro',
       'banking', 'investment', 'consulting', 'advisory',
+      // Ethiopia-specific
+      'revenues bureau', 'tax audit', 'public finance', 'development economics',
+      'microfinance', 'bank', 'insurance', 'trade', 'industry',
       // Amharic
       'ኢኮኖሚክስ', 'ኢኮኖሚ', 'ፋይናንስ', 'ባንክ', 'ንግድ', 'ገበያ',
       'ምርምር', 'ስታቲስቲክስ', 'ኢንቨስትመንት', 'አማካሪ',
+      'የገቢዎች ቢሮ', 'የግብር ኦዲት', 'ህዝባዊ ፋይናንስ', 'ልማት ኢኮኖሚክስ',
+      'ማይክሮፋይናንስ', 'ባንክ', 'ኢንሹራንስ', 'ንግድ', 'ኢንዱስትሪ',
       // Afan Oromo
       'ekinomics', 'qonna', 'maallaqa', 'bankii', 'daldala',
-      'qorannoo', 'tilmaama', 'invastimenti', 'gorsa'
+      'qorannoo', 'tilmaama', 'invastimenti', 'gorsa',
+      'buuroo galii', 'qorannoo qaraxii', 'maallaqa ummataa', 'ekinomics misooma',
+      'maallaqa xinnoo', 'baankii', 'inshuraansii', 'daldala', 'industirii'
     ]
   },
   tech: {
@@ -67,9 +74,9 @@ const JOB_FIELDS = {
       // Amharic
       'ግብይት', 'ዲጂታል', 'ማህበራዊ', 'ብራንድ', 'ማስታወቂያ',
       'ግንኙነት', 'ዘመቻ', 'እድገት',
-      // Afan Oromo
+      // Afan Oromo (fixed quote)
       'gabbii', 'dijitaala', 'hawaasa', 'balbala', 'beeksisa',
-      'quunnamtii', 'olka'ina'
+      'quunnamtii', "olka'ina"
     ]
   },
   healthcare: {
@@ -115,9 +122,11 @@ const ENTRY_LEVEL_KEYWORDS = [
   'recent graduate', 'internship', 'trainee', 'apprentice',
   '0 years', 'zero years', 'entry', 'starting', 'beginner',
   'associate', 'early career',
+  // Ethiopia-specific
+  'fresh', '0 year', 'zero year', 'graduate trainee', 'trainee',
   // Amharic
   'ጅምር', 'አዲስ', 'ልምድ የሌለ', 'ተለማማጅ', 'ተማሪ', 'ጀማሪ',
-  'ያለ ልምድ', 'አዲስ ተመራቂ',
+  'ያለ ልምድ', 'አዲስ ተመራቂ', '0 ዓመት', 'ዜሮ ዓመት',
   // Afan Oromo
   'jirmi', 'haaraa', 'muuxannoo hin qabne', 'leennii', 'barnootaa',
   'kan jalqabe', 'muuxannoo malee', 'haaraa eebbifame'
@@ -138,7 +147,7 @@ const EXCLUSION_KEYWORDS = [
   'ከፍተኛ', 'ዳይሬክተር', 'ማናጀር', 'ርዕሰ', 'መሪ',
   'ልምድ የሚጠይቅ', 'አስፈፃሚ', 'አለቃ',
   // Afan Oromo
-  'ol'aanaa', 'daayireektara', 'manaajara', 'hojjataa', 'qabxii',
+  'ol\'aanaa', 'daayireektara', 'manaajara', 'hojjataa', 'qabxii',
   'muuxannoo barbaada', 'hooggantoo'
 ];
 
@@ -154,9 +163,7 @@ function getUserPrefs(userId) {
     userPrefs[userId] = {
       fields: ['economics'],
       excludeSenior: true,
-      showPreview: false,
       notifyOnMatch: true,
-      compactView: true
     };
   }
   return userPrefs[userId];
@@ -245,23 +252,18 @@ function extractMatchingSummary(text, userPrefs, userId) {
 
   const fieldNames = userPrefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ');
 
-  // ============================================================
-  // COMPACT SUMMARY FORMAT (Clean & Readable)
-  // ============================================================
+  // Compact summary format
   let summary = '';
   
-  // Header
   summary += `✅ *${matchedJobs.length} job(s) found*\n`;
   summary += `📌 ${fieldNames}\n`;
   if (userPrefs.excludeSenior) summary += `🚫 Senior roles excluded\n`;
   summary += `────────────────────\n\n`;
 
-  // Compact job list (only titles/previews)
   matchedJobs.forEach((job, index) => {
     const lines = job.split('\n').filter(line => line.trim().length > 0);
     const title = lines.length > 0 ? lines[0].trim() : job.substring(0, 60);
     
-    // Check for salary indicator
     const hasSalary = /[\$\€\£]|salary|ቤታ|kaffaltii/i.test(job);
     
     summary += `${index + 1}. `;
@@ -270,7 +272,6 @@ function extractMatchingSummary(text, userPrefs, userId) {
     summary += '\n';
   });
 
-  // Action buttons
   const buttons = [
     [Markup.button.callback(`📄 Show Full Details (${matchedJobs.length})`, `show_details_${matchId}`)],
     [Markup.button.callback('🔙 Back to Main', 'menu_main')]
@@ -324,12 +325,17 @@ bot.start(async (ctx) => {
   const prefs = getUserPrefs(userId);
   
   await ctx.reply(
-    `🤖 *Job Filter Bot*\n\n` +
+    `🤖 *Job Filter Bot - Ethiopia Edition*\n\n` +
     `I filter job postings for entry-level positions.\n` +
     `Supports: English, Amharic, Afan Oromo\n\n` +
     `📌 *Current Settings:*\n` +
     `• Fields: ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n` +
-    `• Excluding Senior: ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n\n` +
+    `• Excluding Senior: ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
+    `• Notifications: ${prefs.notifyOnMatch ? '✅ On' : '❌ Off'}\n\n` +
+    `📌 *Commands:*\n` +
+    `/search - Show Ethiopian job sites\n` +
+    `/notify - Toggle notifications\n` +
+    `/stats - Show statistics\n\n` +
     `Forward me a job digest and I'll reply with matching jobs!`,
     {
       parse_mode: 'Markdown',
@@ -340,6 +346,42 @@ bot.start(async (ctx) => {
         [Markup.button.callback('📋 Show My Settings', 'menu_prefs')]
       ])
     }
+  );
+});
+
+// ============================================================
+// WEB SEARCH COMMAND (Ethiopia-focused)
+// ============================================================
+
+bot.command('search', async (ctx) => {
+  await ctx.reply(
+    `🔍 *Searching for Economics Jobs in Ethiopia*\n\n` +
+    `I'll search for fresh graduate Economics positions from Ethiopian job portals.\n\n` +
+    `📌 *Recommended sites:*\n` +
+    `• EthiopianWork.com - Fresh graduate vacancies\n` +
+    `• GeezJobs.com - Economics/Statistics jobs\n` +
+    `• ElelanJobs.com - Fresh graduate jobs\n` +
+    `• GizeJobs.com - Economics category\n` +
+    `• Ethio-jobs.net.et - Economics jobs\n` +
+    `• EthiopianReporterJobs.com - Economics jobs\n\n` +
+    `💡 *Tip:* Forward job postings from these sites to me and I'll filter them automatically!`,
+    { parse_mode: 'Markdown' }
+  );
+});
+
+// ============================================================
+// NOTIFICATION COMMAND
+// ============================================================
+
+bot.command('notify', async (ctx) => {
+  const userId = ctx.from.id;
+  const prefs = getUserPrefs(userId);
+  prefs.notifyOnMatch = !prefs.notifyOnMatch;
+  
+  await ctx.reply(
+    `🔔 *Notification ${prefs.notifyOnMatch ? 'ENABLED ✅' : 'DISABLED ❌'}*\n\n` +
+    `When enabled, I'll send you an alert when I find a matching job in a forwarded message.`,
+    { parse_mode: 'Markdown' }
   );
 });
 
@@ -364,7 +406,6 @@ bot.action(/show_details_(.+)/, async (ctx) => {
     details += `────────────────────\n\n`;
   });
 
-  // Show first 4000 chars (Telegram limit)
   if (details.length > 4000) {
     details = details.substring(0, 3900) + '\n\n... (truncated)';
   }
@@ -467,7 +508,7 @@ bot.action('menu_settings', async (ctx) => {
   await ctx.editMessageText(
     `⚙️ *Settings*\n\n` +
     `📌 *Exclude Senior Roles:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}`,
+    `📌 *Notifications:* ${prefs.notifyOnMatch ? '✅ On' : '❌ Off'}`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard([
@@ -476,7 +517,7 @@ bot.action('menu_settings', async (ctx) => {
           'toggle_exclude'
         )],
         [Markup.button.callback(
-          `Toggle Notify ${prefs.notifyOnMatch ? '🔴' : '🟢'}`,
+          `Toggle Notifications ${prefs.notifyOnMatch ? '🔴' : '🟢'}`,
           'toggle_notify'
         )],
         [Markup.button.callback('🔙 Back to Main', 'menu_main')]
@@ -510,10 +551,10 @@ bot.action('toggle_notify', async (ctx) => {
   const userId = ctx.from.id;
   const prefs = getUserPrefs(userId);
   prefs.notifyOnMatch = !prefs.notifyOnMatch;
-  await ctx.answerCbQuery(`Notify ${prefs.notifyOnMatch ? '✅ ENABLED' : '❌ DISABLED'}`);
+  await ctx.answerCbQuery(`Notifications ${prefs.notifyOnMatch ? '✅ ENABLED' : '❌ DISABLED'}`);
   
   await ctx.editMessageText(
-    `✅ Notify ${prefs.notifyOnMatch ? 'ENABLED' : 'DISABLED'}!`,
+    `✅ Notifications ${prefs.notifyOnMatch ? 'ENABLED' : 'DISABLED'}!`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard([
@@ -584,8 +625,9 @@ bot.action('menu_prefs', async (ctx) => {
     `📋 *Your Settings*\n\n` +
     `📌 *Fields:* ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n` +
     `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}\n\n` +
-    `🌍 *Languages Supported:* English, Amharic, Afan Oromo`,
+    `📌 *Notifications:* ${prefs.notifyOnMatch ? '✅ On' : '❌ Off'}\n\n` +
+    `🌍 *Languages Supported:* English, Amharic, Afan Oromo\n\n` +
+    `📌 *Ethiopian Job Sites:* EthiopianWork, GeezJobs, ElelanJobs, GizeJobs, Ethiojobs, EthiopianReporterJobs`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard([
@@ -604,7 +646,8 @@ bot.action('menu_main', async (ctx) => {
   await ctx.editMessageText(
     `🏠 *Main Menu*\n\n` +
     `📌 *Fields:* ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n` +
-    `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n\n` +
+    `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
+    `📌 *Notifications:* ${prefs.notifyOnMatch ? '✅ On' : '❌ Off'}\n\n` +
     `Select an option below:`,
     {
       parse_mode: 'Markdown',
@@ -629,6 +672,8 @@ bot.command('help', (ctx) => {
     `📌 *Commands:*\n` +
     `/start - Show main menu\n` +
     `/help - Show this help\n` +
+    `/search - Show Ethiopian job sites\n` +
+    `/notify - Toggle notifications\n` +
     `/fields - Show selected fields\n` +
     `/stats - Show statistics\n` +
     `/settings - Show current settings\n` +
@@ -668,7 +713,7 @@ bot.command('settings', (ctx) => {
   ctx.reply(
     `⚙️ *Settings*\n\n` +
     `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}`,
+    `📌 *Notifications:* ${prefs.notifyOnMatch ? '✅ On' : '❌ Off'}`,
     { parse_mode: 'Markdown' }
   );
 });
@@ -681,8 +726,9 @@ bot.command('prefs', (ctx) => {
     `📋 *Your Preferences*\n\n` +
     `📌 *Fields:* ${fields}\n` +
     `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}\n\n` +
-    `🌍 *Languages:* English, Amharic, Afan Oromo`,
+    `📌 *Notifications:* ${prefs.notifyOnMatch ? '✅ On' : '❌ Off'}\n\n` +
+    `🌍 *Languages:* English, Amharic, Afan Oromo\n\n` +
+    `📌 *Ethiopian Job Sites:* EthiopianWork, GeezJobs, ElelanJobs, GizeJobs, Ethiojobs, EthiopianReporterJobs`,
     { parse_mode: 'Markdown' }
   );
 });
@@ -708,8 +754,16 @@ bot.on('text', async (ctx) => {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard(result.buttons)
     });
+    
+    if (prefs.notifyOnMatch) {
+      await ctx.reply(
+        `🔔 *New job match found!*\n\n` +
+        `Forward more job digests to keep finding opportunities!`,
+        { parse_mode: 'Markdown' }
+      );
+    }
   } else {
-    await ctx.reply('❌ No matching entry-level jobs found in this batch.');
+    await ctx.reply('❌ No matching entry-level Economics jobs found in this batch.');
   }
 });
 
