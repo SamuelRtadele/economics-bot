@@ -18,19 +18,12 @@ const JOB_FIELDS = {
       'business', 'analyst', 'data analysis', 'market', 'policy',
       'research', 'statistics', 'econometric', 'macro', 'micro',
       'banking', 'investment', 'consulting', 'advisory',
-      // Ethiopia-specific
-      'revenues bureau', 'tax audit', 'public finance', 'development economics',
-      'microfinance', 'bank', 'insurance', 'trade', 'industry',
       // Amharic
       'ኢኮኖሚክስ', 'ኢኮኖሚ', 'ፋይናንስ', 'ባንክ', 'ንግድ', 'ገበያ',
       'ምርምር', 'ስታቲስቲክስ', 'ኢንቨስትመንት', 'አማካሪ',
-      'የገቢዎች ቢሮ', 'የግብር ኦዲት', 'ህዝባዊ ፋይናንስ', 'ልማት ኢኮኖሚክስ',
-      'ማይክሮፋይናንስ', 'ባንክ', 'ኢንሹራንስ', 'ንግድ', 'ኢንዱስትሪ',
       // Afan Oromo
       'ekinomics', 'qonna', 'maallaqa', 'bankii', 'daldala',
-      'qorannoo', 'tilmaama', 'invastimenti', 'gorsa',
-      'buuroo galii', 'qorannoo qaraxii', 'maallaqa ummataa', 'ekinomics misooma',
-      'maallaqa xinnoo', 'baankii', 'inshuraansii', 'daldala', 'industirii'
+      'qorannoo', 'tilmaama', 'invastimenti', 'gorsa'
     ]
   },
   tech: {
@@ -74,9 +67,9 @@ const JOB_FIELDS = {
       // Amharic
       'ግብይት', 'ዲጂታል', 'ማህበራዊ', 'ብራንድ', 'ማስታወቂያ',
       'ግንኙነት', 'ዘመቻ', 'እድገት',
-      // Afan Oromo (FIXED: double quotes around olka'ina)
+      // Afan Oromo
       'gabbii', 'dijitaala', 'hawaasa', 'balbala', 'beeksisa',
-      'quunnamtii', "olka'ina"
+      'quunnamtii', 'olka'ina'
     ]
   },
   healthcare: {
@@ -122,11 +115,9 @@ const ENTRY_LEVEL_KEYWORDS = [
   'recent graduate', 'internship', 'trainee', 'apprentice',
   '0 years', 'zero years', 'entry', 'starting', 'beginner',
   'associate', 'early career',
-  // Ethiopia-specific
-  'fresh', '0 year', 'zero year', 'graduate trainee', 'trainee',
   // Amharic
   'ጅምር', 'አዲስ', 'ልምድ የሌለ', 'ተለማማጅ', 'ተማሪ', 'ጀማሪ',
-  'ያለ ልምድ', 'አዲስ ተመራቂ', '0 ዓመት', 'ዜሮ ዓመት',
+  'ያለ ልምድ', 'አዲስ ተመራቂ',
   // Afan Oromo
   'jirmi', 'haaraa', 'muuxannoo hin qabne', 'leennii', 'barnootaa',
   'kan jalqabe', 'muuxannoo malee', 'haaraa eebbifame'
@@ -147,7 +138,7 @@ const EXCLUSION_KEYWORDS = [
   'ከፍተኛ', 'ዳይሬክተር', 'ማናጀር', 'ርዕሰ', 'መሪ',
   'ልምድ የሚጠይቅ', 'አስፈፃሚ', 'አለቃ',
   // Afan Oromo
-  "ol'aanaa", 'daayireektara', 'manaajara', 'hojjataa', 'qabxii',
+  'ol'aanaa', 'daayireektara', 'manaajara', 'hojjataa', 'qabxii',
   'muuxannoo barbaada', 'hooggantoo'
 ];
 
@@ -227,7 +218,7 @@ function splitJobListings(text) {
   return parts.length > 1 ? parts : [text];
 }
 
-// Extract matching jobs with clean formatting
+// Extract matching jobs – short summary
 function extractMatchingSummary(text, userPrefs, userId) {
   const chunks = splitJobListings(text);
   const matchedJobs = [];
@@ -250,30 +241,20 @@ function extractMatchingSummary(text, userPrefs, userId) {
   const matchId = Date.now().toString();
   jobMatches[userId][matchId] = matchedJobs;
 
-  const fieldNames = userPrefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ');
-
-  let summary = '';
-  
-  summary += `✅ *${matchedJobs.length} job(s) found*\n`;
-  summary += `📌 ${fieldNames}\n`;
-  if (userPrefs.excludeSenior) summary += `🚫 Senior roles excluded\n`;
-  summary += `────────────────────\n\n`;
+  // ============================================================
+  // SHORT SUMMARY – only titles, no extra info
+  // ============================================================
+  let summary = `✅ Found ${matchedJobs.length} job(s)\n\n`;
 
   matchedJobs.forEach((job, index) => {
     const lines = job.split('\n').filter(line => line.trim().length > 0);
     const title = lines.length > 0 ? lines[0].trim() : job.substring(0, 60);
-    
-    const hasSalary = /[\$\€\£]|salary|ቤታ|kaffaltii/i.test(job);
-    
-    summary += `${index + 1}. `;
-    summary += title.length > 80 ? title.substring(0, 80) + '...' : title;
-    if (hasSalary) summary += ' 💰';
-    summary += '\n';
+    summary += `${index + 1}. ${title.length > 80 ? title.substring(0, 80) + '...' : title}\n`;
   });
 
+  // Action button
   const buttons = [
-    [Markup.button.callback(`📄 Show Full Details (${matchedJobs.length})`, `show_details_${matchId}`)],
-    [Markup.button.callback('🔙 Back to Main', 'menu_main')]
+    [Markup.button.callback(`📄 Show Full Details (${matchedJobs.length})`, `show_details_${matchId}`)]
   ];
 
   return {
@@ -324,18 +305,13 @@ bot.start(async (ctx) => {
   const prefs = getUserPrefs(userId);
   
   await ctx.reply(
-    `🤖 *Job Filter Bot - Ethiopia Edition*\n\n` +
+    `🤖 *Job Filter Bot*\n\n` +
     `I filter job postings for entry-level positions.\n` +
     `Supports: English, Amharic, Afan Oromo\n\n` +
     `📌 *Current Settings:*\n` +
     `• Fields: ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n` +
-    `• Excluding Senior: ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `• Notifications: ${prefs.notifyOnMatch ? '✅ On' : '❌ Off'}\n\n` +
-    `📌 *Commands:*\n` +
-    `/search - Show Ethiopian job sites\n` +
-    `/notify - Toggle notifications\n` +
-    `/stats - Show statistics\n\n` +
-    `Forward me a job digest and I'll reply with matching jobs!`,
+    `• Excluding Senior: ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n\n` +
+    `Forward me a job digest and I'll reply with a short summary!`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard([
@@ -345,42 +321,6 @@ bot.start(async (ctx) => {
         [Markup.button.callback('📋 Show My Settings', 'menu_prefs')]
       ])
     }
-  );
-});
-
-// ============================================================
-// WEB SEARCH COMMAND (Ethiopia-focused)
-// ============================================================
-
-bot.command('search', async (ctx) => {
-  await ctx.reply(
-    `🔍 *Searching for Economics Jobs in Ethiopia*\n\n` +
-    `I'll search for fresh graduate Economics positions from Ethiopian job portals.\n\n` +
-    `📌 *Recommended sites:*\n` +
-    `• EthiopianWork.com - Fresh graduate vacancies\n` +
-    `• GeezJobs.com - Economics/Statistics jobs\n` +
-    `• ElelanJobs.com - Fresh graduate jobs\n` +
-    `• GizeJobs.com - Economics category\n` +
-    `• Ethio-jobs.net.et - Economics jobs\n` +
-    `• EthiopianReporterJobs.com - Economics jobs\n\n` +
-    `💡 *Tip:* Forward job postings from these sites to me and I'll filter them automatically!`,
-    { parse_mode: 'Markdown' }
-  );
-});
-
-// ============================================================
-// NOTIFICATION COMMAND
-// ============================================================
-
-bot.command('notify', async (ctx) => {
-  const userId = ctx.from.id;
-  const prefs = getUserPrefs(userId);
-  prefs.notifyOnMatch = !prefs.notifyOnMatch;
-  
-  await ctx.reply(
-    `🔔 *Notification ${prefs.notifyOnMatch ? 'ENABLED ✅' : 'DISABLED ❌'}*\n\n` +
-    `When enabled, I'll send you an alert when I find a matching job in a forwarded message.`,
-    { parse_mode: 'Markdown' }
   );
 });
 
@@ -412,16 +352,29 @@ bot.action(/show_details_(.+)/, async (ctx) => {
   await ctx.reply(details, {
     parse_mode: 'Markdown',
     ...Markup.inlineKeyboard([
-      [Markup.button.callback('📊 Change Fields', 'menu_fields')],
-      [Markup.button.callback('🔙 Back to Main', 'menu_main')]
+      [Markup.button.callback('🔙 Back to Summary', 'back_to_summary')]
     ])
   });
 
   await ctx.answerCbQuery();
 });
 
+// Back to summary (just a dummy action, but we can show a menu)
+bot.action('back_to_summary', async (ctx) => {
+  await ctx.editMessageText(
+    `🔙 You can forward a new digest for a fresh summary.`,
+    {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard([
+        [Markup.button.callback('🏠 Main Menu', 'menu_main')]
+      ])
+    }
+  );
+  await ctx.answerCbQuery();
+});
+
 // ============================================================
-// INLINE KEYBOARD MENUS
+// INLINE KEYBOARD MENUS (same as before)
 // ============================================================
 
 bot.action('menu_fields', async (ctx) => {
@@ -445,9 +398,8 @@ bot.action('menu_fields', async (ctx) => {
   
   await ctx.editMessageText(
     `📊 *Select Job Categories*\n\n` +
-    `Toggle fields on/off. The bot will search for jobs matching ALL selected fields.\n\n` +
-    `Selected: ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n\n` +
-    `🔄 *Tip:* Click a button to toggle it.`,
+    `Toggle fields on/off.\n\n` +
+    `Selected: ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard(buttons)
@@ -507,7 +459,7 @@ bot.action('menu_settings', async (ctx) => {
   await ctx.editMessageText(
     `⚙️ *Settings*\n\n` +
     `📌 *Exclude Senior Roles:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Notifications:* ${prefs.notifyOnMatch ? '✅ On' : '❌ Off'}`,
+    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard([
@@ -516,7 +468,7 @@ bot.action('menu_settings', async (ctx) => {
           'toggle_exclude'
         )],
         [Markup.button.callback(
-          `Toggle Notifications ${prefs.notifyOnMatch ? '🔴' : '🟢'}`,
+          `Toggle Notify ${prefs.notifyOnMatch ? '🔴' : '🟢'}`,
           'toggle_notify'
         )],
         [Markup.button.callback('🔙 Back to Main', 'menu_main')]
@@ -550,10 +502,10 @@ bot.action('toggle_notify', async (ctx) => {
   const userId = ctx.from.id;
   const prefs = getUserPrefs(userId);
   prefs.notifyOnMatch = !prefs.notifyOnMatch;
-  await ctx.answerCbQuery(`Notifications ${prefs.notifyOnMatch ? '✅ ENABLED' : '❌ DISABLED'}`);
+  await ctx.answerCbQuery(`Notify ${prefs.notifyOnMatch ? '✅ ENABLED' : '❌ DISABLED'}`);
   
   await ctx.editMessageText(
-    `✅ Notifications ${prefs.notifyOnMatch ? 'ENABLED' : 'DISABLED'}!`,
+    `✅ Notify ${prefs.notifyOnMatch ? 'ENABLED' : 'DISABLED'}!`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard([
@@ -624,9 +576,8 @@ bot.action('menu_prefs', async (ctx) => {
     `📋 *Your Settings*\n\n` +
     `📌 *Fields:* ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n` +
     `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Notifications:* ${prefs.notifyOnMatch ? '✅ On' : '❌ Off'}\n\n` +
-    `🌍 *Languages Supported:* English, Amharic, Afan Oromo\n\n` +
-    `📌 *Ethiopian Job Sites:* EthiopianWork, GeezJobs, ElelanJobs, GizeJobs, Ethiojobs, EthiopianReporterJobs`,
+    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}\n\n` +
+    `🌍 *Languages Supported:* English, Amharic, Afan Oromo`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard([
@@ -645,8 +596,7 @@ bot.action('menu_main', async (ctx) => {
   await ctx.editMessageText(
     `🏠 *Main Menu*\n\n` +
     `📌 *Fields:* ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n` +
-    `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Notifications:* ${prefs.notifyOnMatch ? '✅ On' : '❌ Off'}\n\n` +
+    `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n\n` +
     `Select an option below:`,
     {
       parse_mode: 'Markdown',
@@ -671,16 +621,13 @@ bot.command('help', (ctx) => {
     `📌 *Commands:*\n` +
     `/start - Show main menu\n` +
     `/help - Show this help\n` +
-    `/search - Show Ethiopian job sites\n` +
-    `/notify - Toggle notifications\n` +
     `/fields - Show selected fields\n` +
     `/stats - Show statistics\n` +
     `/settings - Show current settings\n` +
     `/prefs - Show your preferences\n\n` +
     `📌 *Languages:* English, Amharic, Afan Oromo\n\n` +
     `📌 *How to use:*\n` +
-    `Forward any job digest to me and I'll filter it.\n` +
-    `I'll show a compact list with a "Show Details" button!`,
+    `Forward any job digest – I'll reply with a short summary!`,
     { parse_mode: 'Markdown' }
   );
 });
@@ -712,7 +659,7 @@ bot.command('settings', (ctx) => {
   ctx.reply(
     `⚙️ *Settings*\n\n` +
     `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Notifications:* ${prefs.notifyOnMatch ? '✅ On' : '❌ Off'}`,
+    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}`,
     { parse_mode: 'Markdown' }
   );
 });
@@ -725,9 +672,8 @@ bot.command('prefs', (ctx) => {
     `📋 *Your Preferences*\n\n` +
     `📌 *Fields:* ${fields}\n` +
     `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
-    `📌 *Notifications:* ${prefs.notifyOnMatch ? '✅ On' : '❌ Off'}\n\n` +
-    `🌍 *Languages:* English, Amharic, Afan Oromo\n\n` +
-    `📌 *Ethiopian Job Sites:* EthiopianWork, GeezJobs, ElelanJobs, GizeJobs, Ethiojobs, EthiopianReporterJobs`,
+    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}\n\n` +
+    `🌍 *Languages:* English, Amharic, Afan Oromo`,
     { parse_mode: 'Markdown' }
   );
 });
@@ -748,22 +694,14 @@ bot.on('text', async (ctx) => {
   const result = extractMatchingSummary(messageText, prefs, userId);
   updateStats(prefs.fields, !!result);
 
+  // 🔇 SILENT if no matches – no reply at all
   if (result) {
     await ctx.reply(result.summary, {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard(result.buttons)
     });
-    
-    if (prefs.notifyOnMatch) {
-      await ctx.reply(
-        `🔔 *New job match found!*\n\n` +
-        `Forward more job digests to keep finding opportunities!`,
-        { parse_mode: 'Markdown' }
-      );
-    }
-  } else {
-    await ctx.reply('❌ No matching entry-level Economics jobs found in this batch.');
   }
+  // else: do nothing – no "No matches" message
 });
 
 // ============================================================
@@ -771,7 +709,18 @@ bot.on('text', async (ctx) => {
 // ============================================================
 
 bot.launch()
-  .then(() => console.log('🚀 Bot is running...'))
+  .then(async () => {
+    console.log('🚀 Bot is running...');
+    await bot.telegram.setMyCommands([
+      { command: 'start', description: '🏠 Show main menu' },
+      { command: 'help', description: 'ℹ️ Help & usage' },
+      { command: 'fields', description: '📊 Show selected fields' },
+      { command: 'stats', description: '📈 Show statistics' },
+      { command: 'settings', description: '⚙️ Show current settings' },
+      { command: 'prefs', description: '📋 Show your preferences' }
+    ]);
+    console.log('✅ Commands set for all users');
+  })
   .catch(err => console.error('Error starting bot:', err));
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
