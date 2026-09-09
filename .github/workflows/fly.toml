@@ -1,4 +1,4 @@
-app = "economics-bot"
+app = "economics-bot-samuel"
 primary_region = "iad"
 
 [build]
