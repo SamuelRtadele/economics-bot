@@ -6,29 +6,88 @@ dotenv.config();
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 // ============================================================
-// ECONOMICS KEYWORDS (extensive – English, Amharic, Afan Oromo)
+// JOB FIELDS WITH MULTI-LANGUAGE SUPPORT
 // ============================================================
 
-const ECONOMICS_KEYWORDS = [
-  // English
-  'economics', 'economist', 'economic', 'finance', 'financial',
-  'business', 'analyst', 'data analysis', 'market', 'policy',
-  'research', 'statistics', 'econometric', 'macro', 'micro',
-  'banking', 'investment', 'consulting', 'advisory', 'budget',
-  'forecast', 'model', 'pricing', 'strategy', 'development',
-  'trade', 'commerce', 'accounting', 'audit', 'tax',
-  // Amharic
-  'ኢኮኖሚክስ', 'ኢኮኖሚ', 'ፋይናንስ', 'ባንክ', 'ንግድ', 'ገበያ',
-  'ምርምር', 'ስታቲስቲክስ', 'ኢንቨስትመንት', 'አማካሪ', 'በጀት',
-  'ትንበያ', 'ሞዴል', 'የዋጋ አወጣጥ', 'ስትራቴጂ', 'ልማት',
-  // Afan Oromo
-  'ekinomics', 'qonna', 'maallaqa', 'bankii', 'daldala',
-  'qorannoo', 'tilmaama', 'invastimenti', 'gorsa', 'baajata',
-  'odeeffannoo', 'akkoomsa', 'guddina', 'daldala biyyaalessaa'
-];
+const JOB_FIELDS = {
+  economics: {
+    name: '📊 Economics',
+    keywords: [
+      'economics', 'economist', 'economic', 'finance', 'financial',
+      'business', 'analyst', 'data analysis', 'market', 'policy',
+      'research', 'statistics', 'econometric', 'macro', 'micro',
+      'banking', 'investment', 'consulting', 'advisory',
+      'ኢኮኖሚክስ', 'ኢኮኖሚ', 'ፋይናንስ', 'ባንክ', 'ንግድ', 'ገበያ',
+      'ምርምር', 'ስታቲስቲክስ', 'ኢንቨስትመንት', 'አማካሪ',
+      'ekinomics', 'qonna', 'maallaqa', 'bankii', 'daldala',
+      'qorannoo', 'tilmaama', 'invastimenti', 'gorsa'
+    ]
+  },
+  tech: {
+    name: '💻 Technology',
+    keywords: [
+      'software', 'developer', 'engineer', 'programming', 'coding',
+      'javascript', 'python', 'java', 'react', 'node', 'full stack',
+      'frontend', 'backend', 'devops', 'cloud', 'aws', 'data science',
+      'machine learning', 'ai', 'artificial intelligence',
+      'ሶፍትዌር', 'ፕሮግራም', 'ኮድ', 'ጃቫስክሪፕት', 'ፓይተን',
+      'ዳታ', 'ማሽን', 'ክላውድ', 'ኢንጂነር',
+      'softiweerii', 'prograamii', 'koodii', 'jazzavaskiripti',
+      'paayiton', 'daataa', 'maashinii', 'kilaawudii', 'injiniyera'
+    ]
+  },
+  finance: {
+    name: '💰 Finance',
+    keywords: [
+      'finance', 'financial', 'investment', 'banking', 'analyst',
+      'portfolio', 'asset management', 'wealth', 'trading',
+      'equity', 'fixed income', 'derivatives', 'risk', 'compliance',
+      'ፋይናንስ', 'ኢንቨስትመንት', 'ባንክ', 'ንብረት', 'ንግድ',
+      'አደጋ', 'ተገዢነት',
+      'maallaqa', 'invastimenti', 'bankii', 'qabeenyaa', 'daldala',
+      'rakkoo', 'fudhatama'
+    ]
+  },
+  marketing: {
+    name: '📢 Marketing',
+    keywords: [
+      'marketing', 'digital marketing', 'seo', 'social media',
+      'content', 'brand', 'advertising', 'pr', 'communications',
+      'campaign', 'analytics', 'growth', 'influencer',
+      'ግብይት', 'ዲጂታል', 'ማህበራዊ', 'ብራንድ', 'ማስታወቂያ',
+      'ግንኙነት', 'ዘመቻ', 'እድገት',
+      'gabbii', 'dijitaala', 'hawaasa', 'balbala', 'beeksisa',
+      'quunnamtii', "olka'ina"
+    ]
+  },
+  healthcare: {
+    name: '🏥 Healthcare',
+    keywords: [
+      'healthcare', 'medical', 'clinical', 'nursing', 'doctor',
+      'pharmaceutical', 'public health', 'health', 'wellness',
+      'hospital', 'patient', 'care', 'research', 'biology',
+      'ጤና', 'ህክምና', 'ክሊኒካል', 'ነርሲንግ', 'ዶክተር',
+      'ፋርማሲ', 'ሆስፒታል', 'ታካሚ', 'ምርምር',
+      'fayyaa', 'yaala', 'klinikaala', 'narsingii', 'doktara',
+      'farmaasii', 'hospitaala', 'dhukkubsataa', 'qorannoo'
+    ]
+  },
+  engineering: {
+    name: '🔧 Engineering',
+    keywords: [
+      'engineering', 'civil', 'mechanical', 'electrical', 'chemical',
+      'structural', 'aerospace', 'automotive', 'industrial',
+      'design', 'manufacturing', 'production', 'quality',
+      'ኢንጂነሪንግ', 'ሲቪል', 'ሜካኒካል', 'ኤሌክትሪካል', 'ኬሚካል',
+      'ንድፍ', 'ማምረቻ', 'ጥራት',
+      'injiniyera', 'siviili', 'mekaaniikaala', 'elektirikaala', 'keemikaala',
+      'faayidaa', 'oomisha', 'gaabbii'
+    ]
+  }
+};
 
 // ============================================================
-// ENTRY LEVEL KEYWORDS (multi‑language)
+// ENTRY LEVEL KEYWORDS (Multi-language)
 // ============================================================
 
 const ENTRY_LEVEL_KEYWORDS = [
@@ -39,13 +98,12 @@ const ENTRY_LEVEL_KEYWORDS = [
   'associate', 'early career',
   'ጅምር', 'አዲስ', 'ልምድ የሌለ', 'ተለማማጅ', 'ተማሪ', 'ጀማሪ',
   'ያለ ልምድ', 'አዲስ ተመራቂ',
-  'jirmi', 'haaraa', 'muuxannoo hin qabne', 'leennii',
-  'barnootaa', 'kan jalqabe', 'muuxannoo malee',
-  'haaraa eebbifame'
+  'jirmi', 'haaraa', 'muuxannoo hin qabne', 'leennii', 'barnootaa',
+  'kan jalqabe', 'muuxannoo malee', 'haaraa eebbifame'
 ];
 
 // ============================================================
-// EXCLUSION KEYWORDS (block senior/manager)
+// EXCLUSION KEYWORDS (Multi-language)
 // ============================================================
 
 const EXCLUSION_KEYWORDS = [
@@ -56,134 +114,130 @@ const EXCLUSION_KEYWORDS = [
   'staff', 'principal',
   'ከፍተኛ', 'ዳይሬክተር', 'ማናጀር', 'ርዕሰ', 'መሪ',
   'ልምድ የሚጠይቅ', 'አስፈፃሚ', 'አለቃ',
-  "ol'aanaa", 'daayireektara', 'manaajara', 'hojjataa',
+  "ol'aanaa", 'daayireektara', 'manaajara', 'hojjataa', 'qabxii',
   'muuxannoo barbaada', 'hooggantoo'
 ];
 
 // ============================================================
-// USER DATA (in‑memory – resets on restart)
+// USER PREFERENCES
 // ============================================================
 
-const userPrefs = {};       // settings per user
-const userSaved = {};       // saved jobs per user
+const userPrefs = {};
+const jobMatches = {};
 
-function getPrefs(userId) {
+function getUserPrefs(userId) {
   if (!userPrefs[userId]) {
     userPrefs[userId] = {
+      fields: ['economics'],
       excludeSenior: true,
+      notifyOnMatch: true,
     };
   }
   return userPrefs[userId];
-}
-
-function getSaved(userId) {
-  if (!userSaved[userId]) {
-    userSaved[userId] = [];
-  }
-  return userSaved[userId];
 }
 
 // ============================================================
 // CORE FUNCTIONS
 // ============================================================
 
-function containsAny(text, keywords) {
+function containsKeywords(text, keywords) {
   const lower = text.toLowerCase();
-  return keywords.some(kw => lower.includes(kw.toLowerCase()));
+  return keywords.some(keyword => lower.includes(keyword.toLowerCase()));
 }
 
 function isEntryLevel(text) {
-  return containsAny(text, ENTRY_LEVEL_KEYWORDS);
+  return containsKeywords(text, ENTRY_LEVEL_KEYWORDS);
 }
 
-function isExcluded(text, prefs) {
-  if (!prefs.excludeSenior) return false;
-  return containsAny(text, EXCLUSION_KEYWORDS);
+function isExcluded(text, userPrefs) {
+  if (!userPrefs.excludeSenior) return false;
+  return containsKeywords(text, EXCLUSION_KEYWORDS);
 }
 
-function isEconomics(text) {
-  return containsAny(text, ECONOMICS_KEYWORDS);
+function isRelevantToFields(text, fields) {
+  let allKeywords = [];
+  fields.forEach(field => {
+    if (JOB_FIELDS[field]) {
+      allKeywords = allKeywords.concat(JOB_FIELDS[field].keywords);
+    }
+  });
+  return containsKeywords(text, allKeywords);
 }
 
-// Relevance score: count how many economics keywords appear
-function getScore(text) {
-  const lower = text.toLowerCase();
-  let count = 0;
-  for (const kw of ECONOMICS_KEYWORDS) {
-    if (lower.includes(kw.toLowerCase())) count++;
-  }
-  // cap at 10 for rating
-  if (count >= 6) return 3;
-  if (count >= 3) return 2;
-  if (count >= 1) return 1;
-  return 0;
+function isMatch(text, userPrefs) {
+  const relevant = isRelevantToFields(text, userPrefs.fields);
+  const entry = isEntryLevel(text);
+  const excluded = isExcluded(text, userPrefs);
+  
+  return relevant && entry && !excluded;
 }
 
-function isMatch(text, prefs) {
-  const relevant = isEconomics(text) && isEntryLevel(text);
-  const excluded = isExcluded(text, prefs);
-  return relevant && !excluded;
-}
-
-// Split bulk text into job chunks
-function splitJobs(text) {
+// Smart splitter
+function splitJobListings(text) {
   let parts = text.split(/\n\s*\n\s*\n/);
+
   if (parts.length <= 1) {
     parts = text.split(/\d+\.\s+/).filter(p => p.trim().length > 10);
     if (parts.length > 1) {
       parts = parts.map((p, i) => `${i+1}. ${p.trim()}`);
     }
   }
+
   if (parts.length <= 1) {
     parts = text.split(/[\n\r]+\s*[-•*]\s+/).filter(p => p.trim().length > 10);
   }
+
   if (parts.length <= 1) {
     parts = text.split(/\n\s*\n/).filter(p => p.trim().length > 20);
   }
+
   return parts.length > 1 ? parts : [text];
 }
 
-// ============================================================
-// PROCESSING & SUMMARY
-// ============================================================
-
-function processDigest(text, userId) {
-  const prefs = getPrefs(userId);
-  const chunks = splitJobs(text);
-  const matched = [];
+// Extract matching jobs – short summary
+function extractMatchingSummary(text, userPrefs, userId) {
+  const chunks = splitJobListings(text);
+  const matchedJobs = [];
 
   chunks.forEach(chunk => {
     const clean = chunk.trim();
-    if (clean.length > 20 && isMatch(clean, prefs)) {
-      const score = getScore(clean);
-      matched.push({ text: clean, score });
+    if (clean.length > 20 && isMatch(clean, userPrefs)) {
+      matchedJobs.push(clean);
     }
   });
 
-  if (matched.length === 0) return null;
+  if (matchedJobs.length === 0) {
+    return null;
+  }
 
-  // Sort by score (highest first)
-  matched.sort((a, b) => b.score - a.score);
+  // Store matches for detail view
+  if (!jobMatches[userId]) {
+    jobMatches[userId] = {};
+  }
+  const matchId = Date.now().toString();
+  jobMatches[userId][matchId] = matchedJobs;
 
-  // Build compact summary
-  let summary = `✅ Found *${matched.length}* Economics job(s)\n\n`;
-  matched.forEach((job, i) => {
-    const stars = '★'.repeat(job.score) + '☆'.repeat(3 - job.score);
-    const lines = job.text.split('\n').filter(l => l.trim().length > 0);
-    const title = lines[0] ? lines[0].trim() : job.text.substring(0, 60);
-    summary += `${i+1}. ${title}  ${stars}\n`;
+  // ============================================================
+  // SHORT SUMMARY – only titles, no extra info
+  // ============================================================
+  let summary = `✅ Found ${matchedJobs.length} job(s)\n\n`;
+
+  matchedJobs.forEach((job, index) => {
+    const lines = job.split('\n').filter(line => line.trim().length > 0);
+    const title = lines.length > 0 ? lines[0].trim() : job.substring(0, 60);
+    summary += `${index + 1}. ${title.length > 80 ? title.substring(0, 80) + '...' : title}\n`;
   });
 
-  // Store matches for detail view and saving
-  const matchId = Date.now().toString();
-  if (!global.jobCache) global.jobCache = {};
-  if (!global.jobCache[userId]) global.jobCache[userId] = {};
-  global.jobCache[userId][matchId] = matched.map(j => j.text);
+  // Action button
+  const buttons = [
+    [Markup.button.callback(`📄 Show Full Details (${matchedJobs.length})`, `show_details_${matchId}`)]
+  ];
 
   return {
     summary,
+    buttons,
     matchId,
-    count: matched.length,
+    hasMatches: true
   };
 }
 
@@ -191,215 +245,103 @@ function processDigest(text, userId) {
 // STATISTICS
 // ============================================================
 
-const stats = { processed: 0, matched: 0, rejected: 0 };
+const stats = {
+  totalProcessed: 0,
+  totalMatched: 0,
+  totalRejected: 0,
+  byField: {}
+};
+
+function updateStats(fields, matched) {
+  stats.totalProcessed++;
+  if (matched) {
+    stats.totalMatched++;
+  } else {
+    stats.totalRejected++;
+  }
+  
+  fields.forEach(field => {
+    if (!stats.byField[field]) {
+      stats.byField[field] = { matched: 0, rejected: 0 };
+    }
+    if (matched) {
+      stats.byField[field].matched++;
+    } else {
+      stats.byField[field].rejected++;
+    }
+  });
+}
 
 // ============================================================
-// BOT COMMANDS & ACTIONS
+// BOT COMMANDS & HANDLERS
 // ============================================================
 
 bot.start(async (ctx) => {
   const userId = ctx.from.id;
-  const prefs = getPrefs(userId);
-  const saved = getSaved(userId);
-
+  const prefs = getUserPrefs(userId);
+  
   await ctx.reply(
-    `📈 *Economics Job Filter*\n\n` +
-    `I scan job digests for *entry‑level Economics* positions.\n` +
-    `🔹 Supports English, Amharic, Afan Oromo\n` +
-    `🔹 Excludes senior/manager roles ${prefs.excludeSenior ? '✅' : '❌'}\n` +
-    `🔹 ${saved.length} saved job(s)\n\n` +
-    `Forward me a job list – I’ll give a quick summary with ★ ratings!`,
+    `🤖 *Job Filter Bot*\n\n` +
+    `I filter job postings for entry-level positions.\n` +
+    `Supports: English, Amharic, Afan Oromo\n\n` +
+    `📌 *Current Settings:*\n` +
+    `• Fields: ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n` +
+    `• Excluding Senior: ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n\n` +
+    `Forward me a job digest and I'll reply with a short summary!`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard([
-        [Markup.button.callback('📊 View Stats', 'stats')],
-        [Markup.button.callback('💾 Saved Jobs', 'saved')],
-        [Markup.button.callback('⚙️ Toggle Senior Exclusion', 'toggle_senior')],
-        [Markup.button.callback('🔄 Clear Saved', 'clear_saved')]
+        [Markup.button.callback('📊 Change Fields', 'menu_fields')],
+        [Markup.button.callback('⚙️ Settings', 'menu_settings')],
+        [Markup.button.callback('📊 Stats', 'menu_stats')],
+        [Markup.button.callback('📋 Show My Settings', 'menu_prefs')]
       ])
     }
   );
 });
 
-// ---------- Stats ----------
-bot.action('stats', async (ctx) => {
-  const rate = stats.processed > 0 ? Math.round((stats.matched / stats.processed) * 100) : 0;
-  await ctx.editMessageText(
-    `📊 *Statistics*\n\n` +
-    `📨 Processed: ${stats.processed}\n` +
-    `✅ Matched: ${stats.matched}\n` +
-    `❌ Rejected: ${stats.rejected}\n` +
-    `📈 Match rate: ${rate}%`,
-    {
-      parse_mode: 'Markdown',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('🔙 Back', 'back_main')]
-      ])
-    }
-  );
-  await ctx.answerCbQuery();
-});
+// ============================================================
+// SHOW DETAILS BUTTON HANDLER
+// ============================================================
 
-// ---------- Toggle senior exclusion ----------
-bot.action('toggle_senior', async (ctx) => {
-  const userId = ctx.from.id;
-  const prefs = getPrefs(userId);
-  prefs.excludeSenior = !prefs.excludeSenior;
-  await ctx.answerCbQuery(`Senior exclusion ${prefs.excludeSenior ? '✅ ON' : '❌ OFF'}`);
-  await ctx.editMessageText(
-    `✅ Senior exclusion is now ${prefs.excludeSenior ? 'ON' : 'OFF'}`,
-    {
-      parse_mode: 'Markdown',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('🔙 Back', 'back_main')]
-      ])
-    }
-  );
-});
-
-// ---------- Saved jobs ----------
-bot.action('saved', async (ctx) => {
-  const userId = ctx.from.id;
-  const saved = getSaved(userId);
-  if (saved.length === 0) {
-    await ctx.answerCbQuery('No saved jobs yet.', { showAlert: true });
-    return;
-  }
-  let msg = `💾 *Saved Jobs (${saved.length})*\n\n`;
-  saved.forEach((job, i) => {
-    const title = job.split('\n')[0].trim() || job.substring(0, 40);
-    msg += `${i+1}. ${title}\n`;
-  });
-  msg += `\nTap a number below to delete it.`;
-
-  const buttons = saved.map((_, i) => [
-    Markup.button.callback(`❌ Delete #${i+1}`, `del_saved_${i}`)
-  ]);
-  buttons.push([Markup.button.callback('🔙 Back', 'back_main')]);
-
-  await ctx.editMessageText(msg, {
-    parse_mode: 'Markdown',
-    ...Markup.inlineKeyboard(buttons)
-  });
-  await ctx.answerCbQuery();
-});
-
-// ---------- Delete individual saved job ----------
-bot.action(/del_saved_(\d+)/, async (ctx) => {
-  const userId = ctx.from.id;
-  const idx = parseInt(ctx.match[1]);
-  const saved = getSaved(userId);
-  if (idx >= 0 && idx < saved.length) {
-    const removed = saved.splice(idx, 1)[0];
-    await ctx.answerCbQuery(`🗑️ Deleted: ${removed.split('\n')[0].substring(0, 30)}...`);
-  } else {
-    await ctx.answerCbQuery('Job not found.', { showAlert: true });
-  }
-  // Refresh saved list
-  await ctx.editMessageText(
-    `💾 Saved list updated. ${saved.length} job(s) remaining.`,
-    {
-      parse_mode: 'Markdown',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('📋 View Saved', 'saved')],
-        [Markup.button.callback('🔙 Back', 'back_main')]
-      ])
-    }
-  );
-});
-
-// ---------- Clear all saved ----------
-bot.action('clear_saved', async (ctx) => {
-  const userId = ctx.from.id;
-  const saved = getSaved(userId);
-  saved.length = 0; // empty array
-  await ctx.answerCbQuery('🗑️ All saved jobs cleared.');
-  await ctx.editMessageText(
-    '✅ All saved jobs have been deleted.',
-    {
-      parse_mode: 'Markdown',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('🔙 Back', 'back_main')]
-      ])
-    }
-  );
-});
-
-// ---------- Show details and save all ----------
-bot.action(/details_(.+)/, async (ctx) => {
+bot.action(/show_details_(.+)/, async (ctx) => {
   const userId = ctx.from.id;
   const matchId = ctx.match[1];
-  const cache = global.jobCache?.[userId]?.[matchId];
-  if (!cache || cache.length === 0) {
-    await ctx.answerCbQuery('❌ Expired. Forward a new digest.', { showAlert: true });
+  
+  if (!jobMatches[userId] || !jobMatches[userId][matchId]) {
+    await ctx.answerCbQuery('❌ Matches expired. Forward a new digest!', { showAlert: true });
     return;
   }
 
-  let detailMsg = `📄 *Full Job Details*\n\n`;
-  cache.forEach((job, i) => {
-    const stars = '★'.repeat(getScore(job)) + '☆'.repeat(3 - getScore(job));
-    detailMsg += `📌 *Job ${i+1}*  ${stars}\n${job}\n\n────────────\n\n`;
+  const matches = jobMatches[userId][matchId];
+  let details = `📄 *Full Job Details*\n\n`;
+  
+  matches.forEach((job, index) => {
+    details += `📌 *Job ${index + 1}*\n${job}\n\n`;
+    details += `────────────────────\n\n`;
   });
 
-  if (detailMsg.length > 4000) {
-    detailMsg = detailMsg.substring(0, 3900) + '\n\n... (truncated)';
+  if (details.length > 4000) {
+    details = details.substring(0, 3900) + '\n\n... (truncated)';
   }
 
-  // Buttons: Save All + Back
-  await ctx.reply(detailMsg, {
+  await ctx.reply(details, {
     parse_mode: 'Markdown',
     ...Markup.inlineKeyboard([
-      [Markup.button.callback(`💾 Save All (${cache.length})`, `save_all_${matchId}`)],
-      [Markup.button.callback('🔙 Back to Summary', 'back_main')]
+      [Markup.button.callback('🔙 Back to Summary', 'back_to_summary')]
     ])
   });
+
   await ctx.answerCbQuery();
 });
 
-// ---------- Save all from a digest ----------
-bot.action(/save_all_(.+)/, async (ctx) => {
-  const userId = ctx.from.id;
-  const matchId = ctx.match[1];
-  const cache = global.jobCache?.[userId]?.[matchId];
-  if (!cache || cache.length === 0) {
-    await ctx.answerCbQuery('❌ No jobs to save.', { showAlert: true });
-    return;
-  }
-  const saved = getSaved(userId);
-  cache.forEach(job => {
-    if (!saved.includes(job)) saved.push(job);
-  });
-  await ctx.answerCbQuery(`💾 ${cache.length} job(s) saved!`);
+bot.action('back_to_summary', async (ctx) => {
   await ctx.editMessageText(
-    `✅ *Saved ${cache.length} job(s)!*\n\n` +
-    `You now have ${saved.length} total saved jobs.`,
+    `🔙 You can forward a new digest for a fresh summary.`,
     {
       parse_mode: 'Markdown',
       ...Markup.inlineKeyboard([
-        [Markup.button.callback('💾 View Saved', 'saved')],
-        [Markup.button.callback('🔙 Back', 'back_main')]
-      ])
-    }
-  );
-});
-
-// ---------- Back to main ----------
-bot.action('back_main', async (ctx) => {
-  const userId = ctx.from.id;
-  const prefs = getPrefs(userId);
-  const saved = getSaved(userId);
-  await ctx.editMessageText(
-    `📈 *Economics Job Filter*\n\n` +
-    `🔹 Excludes senior/manager ${prefs.excludeSenior ? '✅' : '❌'}\n` +
-    `🔹 ${saved.length} saved job(s)\n\n` +
-    `Forward a digest to get started.`,
-    {
-      parse_mode: 'Markdown',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('📊 Stats', 'stats')],
-        [Markup.button.callback('💾 Saved Jobs', 'saved')],
-        [Markup.button.callback('⚙️ Toggle Senior', 'toggle_senior')],
-        [Markup.button.callback('🔄 Clear Saved', 'clear_saved')]
+        [Markup.button.callback('🏠 Main Menu', 'menu_main')]
       ])
     }
   );
@@ -407,63 +349,345 @@ bot.action('back_main', async (ctx) => {
 });
 
 // ============================================================
-// TEXT MESSAGE HANDLER
+// INLINE KEYBOARD MENUS
+// ============================================================
+
+bot.action('menu_fields', async (ctx) => {
+  const userId = ctx.from.id;
+  const prefs = getUserPrefs(userId);
+  
+  let buttons = [];
+  Object.keys(JOB_FIELDS).forEach(key => {
+    const isActive = prefs.fields.includes(key);
+    buttons.push([
+      Markup.button.callback(
+        `${isActive ? '✅' : '⬜'} ${JOB_FIELDS[key].name}`,
+        `toggle_field_${key}`
+      )
+    ]);
+  });
+  
+  buttons.push([
+    Markup.button.callback('🔙 Back to Main', 'menu_main')
+  ]);
+  
+  await ctx.editMessageText(
+    `📊 *Select Job Categories*\n\n` +
+    `Toggle fields on/off.\n\n` +
+    `Selected: ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}`,
+    {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard(buttons)
+    }
+  );
+  await ctx.answerCbQuery();
+});
+
+Object.keys(JOB_FIELDS).forEach(key => {
+  bot.action(`toggle_field_${key}`, async (ctx) => {
+    const userId = ctx.from.id;
+    const prefs = getUserPrefs(userId);
+    
+    if (prefs.fields.includes(key)) {
+      if (prefs.fields.length === 1) {
+        await ctx.answerCbQuery('❌ You must keep at least one field selected!', { showAlert: true });
+        return;
+      }
+      prefs.fields = prefs.fields.filter(f => f !== key);
+    } else {
+      prefs.fields.push(key);
+    }
+    
+    let buttons = [];
+    Object.keys(JOB_FIELDS).forEach(k => {
+      const isActive = prefs.fields.includes(k);
+      buttons.push([
+        Markup.button.callback(
+          `${isActive ? '✅' : '⬜'} ${JOB_FIELDS[k].name}`,
+          `toggle_field_${k}`
+        )
+      ]);
+    });
+    buttons.push([
+      Markup.button.callback('🔙 Back to Main', 'menu_main')
+    ]);
+    
+    await ctx.editMessageText(
+      `📊 *Select Job Categories*\n\n` +
+      `Toggle fields on/off.\n\n` +
+      `Selected: ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}`,
+      {
+        parse_mode: 'Markdown',
+        ...Markup.inlineKeyboard(buttons)
+      }
+    );
+    await ctx.answerCbQuery();
+  });
+});
+
+bot.action('menu_settings', async (ctx) => {
+  const userId = ctx.from.id;
+  const prefs = getUserPrefs(userId);
+  
+  await ctx.editMessageText(
+    `⚙️ *Settings*\n\n` +
+    `📌 *Exclude Senior Roles:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
+    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}`,
+    {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard([
+        [Markup.button.callback(
+          `Toggle Senior Exclusion ${prefs.excludeSenior ? '🔴' : '🟢'}`,
+          'toggle_exclude'
+        )],
+        [Markup.button.callback(
+          `Toggle Notify ${prefs.notifyOnMatch ? '🔴' : '🟢'}`,
+          'toggle_notify'
+        )],
+        [Markup.button.callback('🔙 Back to Main', 'menu_main')]
+      ])
+    }
+  );
+  await ctx.answerCbQuery();
+});
+
+bot.action('toggle_exclude', async (ctx) => {
+  const userId = ctx.from.id;
+  const prefs = getUserPrefs(userId);
+  prefs.excludeSenior = !prefs.excludeSenior;
+  await ctx.answerCbQuery(`Senior exclusion ${prefs.excludeSenior ? '✅ ENABLED' : '❌ DISABLED'}`);
+  
+  await ctx.editMessageText(
+    `✅ Senior exclusion ${prefs.excludeSenior ? 'ENABLED' : 'DISABLED'}!`,
+    {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard([
+        [Markup.button.callback('🔙 Back to Settings', 'menu_settings')],
+        [Markup.button.callback('🏠 Back to Main', 'menu_main')]
+      ])
+    }
+  );
+});
+
+bot.action('toggle_notify', async (ctx) => {
+  const userId = ctx.from.id;
+  const prefs = getUserPrefs(userId);
+  prefs.notifyOnMatch = !prefs.notifyOnMatch;
+  await ctx.answerCbQuery(`Notify ${prefs.notifyOnMatch ? '✅ ENABLED' : '❌ DISABLED'}`);
+  
+  await ctx.editMessageText(
+    `✅ Notify ${prefs.notifyOnMatch ? 'ENABLED' : 'DISABLED'}!`,
+    {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard([
+        [Markup.button.callback('🔙 Back to Settings', 'menu_settings')],
+        [Markup.button.callback('🏠 Back to Main', 'menu_main')]
+      ])
+    }
+  );
+});
+
+bot.action('menu_stats', async (ctx) => {
+  const matchRate = stats.totalProcessed > 0 
+    ? Math.round((stats.totalMatched / stats.totalProcessed) * 100) 
+    : 0;
+  
+  let fieldStats = '';
+  Object.keys(stats.byField).forEach(key => {
+    const s = stats.byField[key];
+    const total = s.matched + s.rejected;
+    const rate = total > 0 ? Math.round((s.matched / total) * 100) : 0;
+    fieldStats += `📌 ${JOB_FIELDS[key]?.name || key}: ${s.matched}/${total} (${rate}%)\n`;
+  });
+  
+  await ctx.editMessageText(
+    `📊 *Bot Statistics*\n\n` +
+    `📨 Total processed: ${stats.totalProcessed}\n` +
+    `✅ Matched: ${stats.totalMatched}\n` +
+    `❌ Rejected: ${stats.totalRejected}\n` +
+    `📈 Match rate: ${matchRate}%\n\n` +
+    `*By Field:*\n${fieldStats || 'No data yet'}`,
+    {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard([
+        [Markup.button.callback('🔄 Reset Stats', 'reset_stats')],
+        [Markup.button.callback('🔙 Back to Main', 'menu_main')]
+      ])
+    }
+  );
+  await ctx.answerCbQuery();
+});
+
+bot.action('reset_stats', async (ctx) => {
+  stats.totalProcessed = 0;
+  stats.totalMatched = 0;
+  stats.totalRejected = 0;
+  stats.byField = {};
+  await ctx.answerCbQuery('📊 Stats reset!');
+  await ctx.editMessageText(
+    '✅ *Statistics have been reset!*',
+    {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard([
+        [Markup.button.callback('📊 View Stats', 'menu_stats')],
+        [Markup.button.callback('🏠 Back to Main', 'menu_main')]
+      ])
+    }
+  );
+});
+
+bot.action('menu_prefs', async (ctx) => {
+  const userId = ctx.from.id;
+  const prefs = getUserPrefs(userId);
+  
+  await ctx.editMessageText(
+    `📋 *Your Settings*\n\n` +
+    `📌 *Fields:* ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n` +
+    `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
+    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}\n\n` +
+    `🌍 *Languages Supported:* English, Amharic, Afan Oromo`,
+    {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard([
+        [Markup.button.callback('🔙 Back to Main', 'menu_main')]
+      ])
+    }
+  );
+  await ctx.answerCbQuery();
+});
+
+bot.action('menu_main', async (ctx) => {
+  const userId = ctx.from.id;
+  const prefs = getUserPrefs(userId);
+  
+  await ctx.editMessageText(
+    `🏠 *Main Menu*\n\n` +
+    `📌 *Fields:* ${prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ')}\n` +
+    `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n\n` +
+    `Select an option below:`,
+    {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard([
+        [Markup.button.callback('📊 Change Fields', 'menu_fields')],
+        [Markup.button.callback('⚙️ Settings', 'menu_settings')],
+        [Markup.button.callback('📊 Stats', 'menu_stats')],
+        [Markup.button.callback('📋 Show My Settings', 'menu_prefs')]
+      ])
+    }
+  );
+  await ctx.answerCbQuery();
+});
+
+// ============================================================
+// COMMANDS
+// ============================================================
+
+bot.command('help', (ctx) => {
+  ctx.reply(
+    `🤖 *Job Filter Bot - Help*\n\n` +
+    `📌 *Commands:*\n` +
+    `/start - Show main menu\n` +
+    `/help - Show this help\n` +
+    `/fields - Show selected fields\n` +
+    `/stats - Show statistics\n` +
+    `/settings - Show current settings\n` +
+    `/prefs - Show your preferences\n\n` +
+    `📌 *Languages:* English, Amharic, Afan Oromo\n\n` +
+    `📌 *How to use:*\n` +
+    `Forward any job digest – I'll reply with a short summary!`,
+    { parse_mode: 'Markdown' }
+  );
+});
+
+bot.command('fields', (ctx) => {
+  const userId = ctx.from.id;
+  const prefs = getUserPrefs(userId);
+  const fields = prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ');
+  ctx.reply(`📊 *Selected Fields:* ${fields}`, { parse_mode: 'Markdown' });
+});
+
+bot.command('stats', (ctx) => {
+  const matchRate = stats.totalProcessed > 0 
+    ? Math.round((stats.totalMatched / stats.totalProcessed) * 100) 
+    : 0;
+  ctx.reply(
+    `📊 *Bot Statistics*\n\n` +
+    `📨 Total processed: ${stats.totalProcessed}\n` +
+    `✅ Matched: ${stats.totalMatched}\n` +
+    `❌ Rejected: ${stats.totalRejected}\n` +
+    `📈 Match rate: ${matchRate}%`,
+    { parse_mode: 'Markdown' }
+  );
+});
+
+bot.command('settings', (ctx) => {
+  const userId = ctx.from.id;
+  const prefs = getUserPrefs(userId);
+  ctx.reply(
+    `⚙️ *Settings*\n\n` +
+    `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
+    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}`,
+    { parse_mode: 'Markdown' }
+  );
+});
+
+bot.command('prefs', (ctx) => {
+  const userId = ctx.from.id;
+  const prefs = getUserPrefs(userId);
+  const fields = prefs.fields.map(f => JOB_FIELDS[f]?.name || f).join(', ');
+  ctx.reply(
+    `📋 *Your Preferences*\n\n` +
+    `📌 *Fields:* ${fields}\n` +
+    `📌 *Exclude Senior:* ${prefs.excludeSenior ? '✅ Yes' : '❌ No'}\n` +
+    `📌 *Notify on Match:* ${prefs.notifyOnMatch ? '✅ Yes' : '❌ No'}\n\n` +
+    `🌍 *Languages:* English, Amharic, Afan Oromo`,
+    { parse_mode: 'Markdown' }
+  );
+});
+
+// ============================================================
+// MESSAGE HANDLER
 // ============================================================
 
 bot.on('text', async (ctx) => {
   const userId = ctx.from.id;
-  const text = ctx.message.text;
-  if (text.startsWith('/')) return;
+  const prefs = getUserPrefs(userId);
+  const messageText = ctx.message.text;
 
-  stats.processed++;
+  if (messageText.startsWith('/')) return;
+
   await ctx.sendChatAction('typing');
 
-  const result = processDigest(text, userId);
-  if (!result) {
-    stats.rejected++;
-    // 🔇 Silent – no reply on no matches
-    return;
+  const result = extractMatchingSummary(messageText, prefs, userId);
+  updateStats(prefs.fields, !!result);
+
+  if (result) {
+    await ctx.reply(result.summary, {
+      parse_mode: 'Markdown',
+      ...Markup.inlineKeyboard(result.buttons)
+    });
   }
-
-  stats.matched++;
-  const summary = result.summary;
-
-  // Show compact summary with a "Details" button
-  await ctx.reply(summary, {
-    parse_mode: 'Markdown',
-    ...Markup.inlineKeyboard([
-      [Markup.button.callback(`📄 View Details & Save All (${result.count})`, `details_${result.matchId}`)],
-      [Markup.button.callback('💾 Save All', `save_all_${result.matchId}`)]
-    ])
-  });
+  // else: silent – no reply on no matches
 });
 
 // ============================================================
-// COMMANDS (persistent menu)
-// ============================================================
-
-bot.command('start', (ctx) => {
-  // We already have start, but we can redirect to main menu
-  ctx.reply('Use the buttons below or forward a job digest.', {
-    ...Markup.inlineKeyboard([
-      [Markup.button.callback('🏠 Main Menu', 'back_main')]
-    ])
-  });
-});
-
-// ============================================================
-// LAUNCH BOT
+// START BOT
 // ============================================================
 
 bot.launch()
   .then(async () => {
-    console.log('🚀 Economics Job Bot is running...');
+    console.log('🚀 Bot is running...');
     await bot.telegram.setMyCommands([
-      { command: 'start', description: '🏠 Main menu' },
+      { command: 'start', description: '🏠 Show main menu' },
+      { command: 'help', description: 'ℹ️ Help & usage' },
+      { command: 'fields', description: '📊 Show selected fields' },
+      { command: 'stats', description: '📈 Show statistics' },
+      { command: 'settings', description: '⚙️ Show current settings' },
+      { command: 'prefs', description: '📋 Show your preferences' }
     ]);
-    console.log('✅ Commands registered');
+    console.log('✅ Commands set for all users');
   })
-  .catch(err => console.error('Error:', err));
+  .catch(err => console.error('Error starting bot:', err));
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
